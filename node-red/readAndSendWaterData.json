@@ -1,0 +1,207 @@
+[{
+        "id": "6117511471745fbf",
+        "type": "tab",
+        "label": "Send Water Data",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "89774679d4e0e5fd",
+        "type": "http request",
+        "z": "6117511471745fbf",
+        "name": "Get Glan data",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://info.ktn.gv.at/asp/hydro/daten/json/hdkaernten_abfluss_lite.json",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 300,
+        "y": 120,
+        "wires": [
+            [
+                "08e2fa545168202f"
+            ]
+        ]
+    },
+    {
+        "id": "08e2fa545168202f",
+        "type": "json",
+        "z": "6117511471745fbf",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 470,
+        "y": 120,
+        "wires": [
+            [
+                "248e58c4f8755563"
+            ]
+        ]
+    },
+    {
+        "id": "248e58c4f8755563",
+        "type": "function",
+        "z": "6117511471745fbf",
+        "name": "Extract Glan Data",
+        "func": "const topicPrefix = \"homeassistant/sensor/\"\nconst search_for = \"${search-for-river}\"\nconst data = msg.payload[\"features\"].filter( entry => entry[\"properties\"][\"name\"] == search_for)[0][\"properties\"]\n\nreturn {\n    ...msg,\n    payload: {\n        glanZellRunoff: data[\"letzter_wert_q\"],\n        glanZellRunoffDate: data[\"letzter_wert_q_date\"],\n        glanZellLevel: data[\"letzter_wert_w\"],\n        glanZellLevelDate: data[\"letzter_wert_w_date\"]\n    },\n    topic: topicPrefix + \"sensorGlanZell/state\"\n};",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 650,
+        "y": 120,
+        "wires": [
+            [
+                "8b9224f54a180c9f"
+            ]
+        ]
+    },
+    {
+        "id": "8b9224f54a180c9f",
+        "type": "mqtt out",
+        "z": "6117511471745fbf",
+        "name": "Send Data",
+        "topic": "",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "669bb4eaa5a0db2e",
+        "x": 890,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "2043093255ee44c9",
+        "type": "inject",
+        "z": "6117511471745fbf",
+        "name": "",
+        "props": [{
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "900",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "330",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 160,
+        "wires": [
+            [
+                "89774679d4e0e5fd",
+                "1528ca7cd53f05fd"
+            ]
+        ]
+    },
+    {
+        "id": "1528ca7cd53f05fd",
+        "type": "http request",
+        "z": "6117511471745fbf",
+        "name": "Get Woerthersee data",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "https://info.ktn.gv.at/asp/hydro/daten/json/hdkaernten_see_lite.json",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 280,
+        "y": 200,
+        "wires": [
+            [
+                "99f5e736533001cc"
+            ]
+        ]
+    },
+    {
+        "id": "99f5e736533001cc",
+        "type": "json",
+        "z": "6117511471745fbf",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 470,
+        "y": 200,
+        "wires": [
+            [
+                "ca19c0cc4b581e00"
+            ]
+        ]
+    },
+    {
+        "id": "ca19c0cc4b581e00",
+        "type": "function",
+        "z": "6117511471745fbf",
+        "name": "Extract Woerthersee Data",
+        "func": "const topicPrefix = \"homeassistant/sensor/\"\nconst search_for = \"${search-for-lake}\"\nconst data = msg.payload[\"features\"].filter( entry => entry[\"properties\"][\"name\"] == search_for)[0][\"properties\"]\n\nreturn {\n    ...msg,\n    payload: {\n        woertherseePoertschachLevel: data[\"letzter_wert_w\"],\n        woertherseePoertschachLevelDate: data[\"letzter_wert_w_date\"],\n        woertherseePoertschachTemperature: data[\"letzter_wert_wt\"],\n        woertherseePoertschachTemperatureDate: data[\"letzter_wert_wt_date\"]\n    },\n    topic: topicPrefix + \"sensorWoerterseePoertschach/state\"\n};",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 670,
+        "y": 200,
+        "wires": [
+            [
+                "8b9224f54a180c9f"
+            ]
+        ]
+    },
+    {
+        "id": "669bb4eaa5a0db2e",
+        "type": "mqtt-broker",
+        "name": "Home Assistant",
+        "broker": "${mqtt-broker-ip}",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]
