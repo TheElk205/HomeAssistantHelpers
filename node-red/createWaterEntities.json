@@ -1,0 +1,115 @@
+[{
+        "id": "339ec4addb56abfd",
+        "type": "tab",
+        "label": "Create Entities",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "1fd4e9e9747d3c22",
+        "type": "inject",
+        "z": "339ec4addb56abfd",
+        "name": "",
+        "props": [{
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "10800",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "300",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 150,
+        "y": 60,
+        "wires": [
+            [
+                "7a6d7b73c3a161e4"
+            ]
+        ]
+    },
+    {
+        "id": "7a6d7b73c3a161e4",
+        "type": "function",
+        "z": "339ec4addb56abfd",
+        "name": "function 2",
+        "func": "\nconst topicPrefix = \"homeassistant/sensor/\"\nconst state_topic_glan_zell = topicPrefix + \"sensorGlanZell/state\"\nconst state_topic_woerthersee_poertschach = topicPrefix + \"sensorWoerterseePoertschach/state\"\nconst device_measure_glan_zell = {\n   \"identifiers\": [\n      \"glanZell01\"\n   ],\n   \"name\": \"Glan Messstelle Zell\"\n}\n\nconst device_measure_woerthersee_poertschach = {\n   \"identifiers\": [\n      \"woertherseePoertschach01\"\n   ],\n   \"name\": \"Woerthersee Messstelle Poertschach\"\n}\n\nreturn [\n   {\n      topic: topicPrefix + \"sensorGlanZell_level/config\",\n      payload: {\n         \"state_class\": \"measurement\",\n         \"name\": \"Glan Level\",\n         \"state_topic\": state_topic_glan_zell,\n         \"unit_of_measurement\": \"cm\",\n         \"value_template\": \"{{ value_json.glanZellLevel }}\",\n         \"unique_id\": \"glanZellWaterLevel01\",\n         \"object_id\": \"glan.zell.level\",\n         \"device\": device_measure_glan_zell\n      }\n   },\n   {\n      topic: topicPrefix + \"sensorGlanZell_runoff/config\",\n      payload: {\n         \"state_class\": \"measurement\",\n         \"name\": \"Glan Runoff\",\n         \"state_topic\": state_topic_glan_zell,\n         \"unit_of_measurement\": \"m³/s\",\n         \"value_template\": \"{{ value_json.glanZellRunoff }}\",\n         \"unique_id\": \"glanZellRunoff01\",\n         \"object_id\": \"glan.zell.runoff\",\n         \"device\": device_measure_glan_zell\n      }\n   },\n   {\n      topic: topicPrefix + \"sensorWoertherseePoertschach_level/config\",\n      payload: {\n         \"state_class\": \"measurement\",\n         \"name\": \"Woerthersee Level\",\n         \"state_topic\": state_topic_woerthersee_poertschach,\n         \"unit_of_measurement\": \"cm\",\n         \"value_template\": \"{{ value_json.woertherseePoertschachLevel }}\",\n         \"unique_id\": \"woertherseePoertschachLevel01\",\n         \"object_id\": \"woerthersee.poertschach.level\",\n         \"device\": device_measure_woerthersee_poertschach\n      }\n   },\n   {\n      topic: topicPrefix + \"sensorWoertherseePoertschach_temperature/config\",\n      payload: {\n         \"state_class\": \"measurement\",\n         \"name\": \"Woerthersee Temperature\",\n         \"state_topic\": state_topic_woerthersee_poertschach,\n         \"unit_of_measurement\": \"°C\",\n         \"value_template\": \"{{ value_json.woertherseePoertschachTemperature }}\",\n         \"unique_id\": \"woertherseePoertschachTemperature01\",\n         \"object_id\": \"woerthersee.poertschach.temperture\",\n         \"device\": device_measure_woerthersee_poertschach\n      }\n   }\n   ];",
+        "outputs": 4,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 60,
+        "wires": [
+            [
+                "38c5a0ed978e5b28"
+            ],
+            [
+                "38c5a0ed978e5b28"
+            ],
+            [
+                "38c5a0ed978e5b28"
+            ],
+            [
+                "38c5a0ed978e5b28"
+            ]
+        ]
+    },
+    {
+        "id": "38c5a0ed978e5b28",
+        "type": "mqtt out",
+        "z": "339ec4addb56abfd",
+        "name": "",
+        "topic": "",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "669bb4eaa5a0db2e",
+        "x": 610,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "669bb4eaa5a0db2e",
+        "type": "mqtt-broker",
+        "name": "Home Assistant",
+        "broker": "${mqtt-broker-ip}",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]
